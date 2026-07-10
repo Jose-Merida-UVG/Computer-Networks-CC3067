@@ -1,0 +1,155 @@
+\documentclass[11pt]{article}
+
+\usepackage[spanish]{babel}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath, amssymb, amsfonts}
+\usepackage{booktabs}
+\usepackage{enumitem}
+\usepackage{tcolorbox}
+\usepackage{hyperref}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{parskip}
+\usepackage{pgfplots}
+
+\usetikzlibrary{arrows.meta}
+\pgfplotsset{compat=1.18}
+
+\lstset{
+  language=Python,
+  basicstyle=\ttfamily\footnotesize,
+  breaklines=true,
+  columns=flexible,
+  keepspaces=true,
+  commentstyle=\color{gray}\itshape,
+  keywordstyle=\color{blue!70!black}\bfseries,
+  stringstyle=\color{green!40!black},
+  frame=L,
+  xleftmargin=2em,
+  showstringspaces=false,
+  tabsize=4
+}
+
+\title{\textbf{Parte 1: Esquemas de Comunicación} \vspace{1em}\\
+  Redes de Computadoras - CC308}
+  \author{José Mérida - 201105, Javier España - 23361 \\
+  Anggelie Velásquez - 221181, Mia Fuentes - 23775}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+\subsection*{Introducción}
+
+Para esta primera parte del laboratorio nos organizamos en pareja para replicar, de forma remota, la manera en
+que se transmitía información antes de las redes de computadoras modernas.
+
+La dinámica se dividió en tres partes. En la primera, cada quien envió mensajes al otro usando
+la estación de telégrafo (generando los pulsos o bits según el esquema) a través de una llamada de Zoom, compartiendo audio
+para que el receptor escuchara directamente el sonido. En la segunda parte repetimos el ejercicio, pero esta vez empaquetando
+el mensaje completo en una nota de voz que se enviaba de una sola vez, en vez de transmitirlo en tiempo real.
+
+A continuación se presentan los resultados de la transmisión en vivo (Morse y Baudot), seguidos de los resultados
+de la transmisión empaquetada, las respuestas a las preguntas del laboratorio y la explicación del protocolo
+que acordamos para la parte del conmutador.
+
+\subsubsection*{Transmisión en vivo}
+
+En esta primera parte cada integrante de la pareja transmitió mensajes al otro en tiempo real, primero utilizando código Morse y luego código Baudot, sin posibilidad de repetir la transmisión una vez iniciada.
+
+\subsubsection*{Código Morse}
+
+\textbf{José Mérida}
+\begin{itemize}[nosep]
+  \item TENGO HAMBRE $\rightarrow$ Indescifrable
+  \item MENSAJE INSANO $\rightarrow$ MENSAJE INSANO
+  \item SECRETOSOS $\rightarrow$ SENTERENSOSOS
+\end{itemize}
+
+\textbf{Javier España}
+\begin{itemize}[nosep]
+  \item LLEGARE MANANA $\rightarrow$ ESHELAR MANANA
+  \item REUNION APLAZADA $\rightarrow$ AEEUNIDN APLAZADA
+  \item VIAJE SEGURO $\rightarrow$ VIAO SEGURO
+\end{itemize}
+
+\subsubsection*{Código Baudot}
+
+Repetimos el mismo ejercicio de transmisión en vivo, esta vez utilizando código Baudot en lugar de Morse.
+
+\textbf{José Mérida}
+\begin{itemize}[nosep]
+  \item PAN CON POLLO $\rightarrow$ PNAEONPLO
+  \item POLLO CON PAN $\rightarrow$ PLRRONPNL
+  \item COCA COLA ZERO $\rightarrow$ BREHH AOLL
+\end{itemize}
+
+\textbf{Javier España}
+\begin{itemize}[nosep]
+  \item FELICIDADES $\rightarrow$ cesnmnrj CESNMNRJ
+  \item FINALIZADO $\rightarrow$ CANIRNIA (Carniceria?)
+  \item ESPERA TONO $\rightarrow$ EAGELHEAAA
+\end{itemize}
+
+\subsubsection*{Transmisión ``empaquetada''}
+
+Para esta parte usamos código Morse nuevamente, pero en lugar de transmitir en vivo, cada quien grabó el mensaje completo en una nota de voz que el receptor podía escuchar (y reproducir) tantas veces como necesitara antes de decodificarlo.
+
+\textbf{Tono}
+\begin{itemize}[nosep]
+  \item BUSCAR LENTES $\rightarrow$ BUSCAR LENTES
+  \item ALMUERZO LISTO $\rightarrow$ ALMUERZO LISTO
+  \item LLAMAME LUEGO $\rightarrow$ LLAMAME LUERO
+\end{itemize}
+
+\textbf{España}
+\begin{itemize}[nosep]
+  \item TRAJE LAS LLAVES $\rightarrow$ TRAJE LAS LLAVES
+  \item ESTOY LLEGANDO $\rightarrow$ ESTOY LLEGANDO
+  \item REVISA EL CORREO $\rightarrow$ REVISA EL CORPEO
+\end{itemize}
+
+Como se puede ver, al poder escuchar la nota de voz más de una vez, la tasa de acierto subió bastante en comparación con la transmisión en vivo, donde no había forma de "rebobinar" si se perdía un pulso. Aun así se colaron un par de errores mínimos (una letra cambiada por otra parecida en sonido), lo cual se explica más a detalle en la siguiente sección.
+
+\subsection*{Preguntas}
+\textit{¿Qué esquema (código) fue más fácil de transmitir y por qué? ¿Qué esquema (código) fue más difícil
+de transmitir y por qué?}
+
+El protocolo que más nos facilitó la comunicación fue el código morse, a pesar que ninguno de nosotros estaba familiarizado con este
+sistema fue el más claro por mucho. Las pausas eran bastante más largas y los sonidos eran más fáciles de lograr discernir. Por otro lado,
+la transmisión Baudot tenía sonidos menos diferenciables y mucho más rápidos. Entonces fue mucho más difícil de establecer una comunicación, destacando
+también que los espacios entre letras no dan un descanso si no que son otro símbolo adicional para decodificar. Hablando en cuanto
+a facilidad de enviar un mensaje, utilizando el código Baudot simplemente teníamos que referenciar una letra por lo que fue mucho
+más fácil para el emisor. Utilizando código morse, el emisor tuvo que hacer un esfuerzo adicional en ubicar los códigos de las letras
+donde además sufrimos más errores de emisión que de recepción.
+
+De manera resumida, para el emisor de mensaje el código Baudot es mucho más ergonómico pero es mucho más difícil establecer una
+comunicación adecuada utilizándolo. El código morse es directamente lo opuesto, agrega carga sobre el emisor pero transmite un mensaje
+más claro.
+
+\textit{¿Qué esquema tuvo menos errores (incluir datos que lo evidencien)?}
+
+El esquema que menos errores tuvo fue el código morse, utilizando el código Baudot no fuimos capaces de descifrar un solo mensaje o
+tener alguna frase mínimamente reconocible. Por otro lado, tuvimos un caso utilizando código morse donde el mensaje fue decodificado
+a la perfección y otros 4 donde teniendo cierto contexto de la comunicación se pudo haber intuido cual era el mensaje a transmitir.
+
+\textit{¿Qué dificultades involucra el enviar un mensaje de forma ``empaquetada''?}
+
+Realmente no encontramos mayor desventaja utilizando los métodos de comunicación del laboratorio, encontramos que los mensajes enviados de manera
+empaquetada mejoran mucho más la habilidad de poder decodificar un mensaje. La fricción que podría existir en un caso real, es que el mensaje
+tenga algún error y no se pueda descrifrar por parte del receptor del mensaje. Esto resultaría en otro mensaje siendo enviado de regreso, agregando
+más latencia en comparación a la comunicación directa.
+
+\textit{¿Qué posibilidades incluye la introducción de un conmutador en el sistema?}
+
+Introducir un conmutador permite que no todos los participantes necesiten estar conectados directamente entre sí. En lugar de que
+cada cliente tenga que coordinar una comunicación directa con cada uno de los demás, todos se conectan a un único punto central
+que se encarga de dirigir el mensaje al destino correcto. Esto reduce la cantidad de conexiones necesarias 
+y centraliza la lógica de enrutamiento en un solo lugar, permitiendo además que el conmutador controle el orden
+y el ritmo en que se atienden los mensajes cuando llegan varias solicitudes casi al mismo tiempo.
+
+\textit{¿Qué ventajas o desventajas se tienen al momento de agregar más conmutadores al sistema?}
+
+\subsection*{Protocolo Parte 3}
+
+\end{document}
