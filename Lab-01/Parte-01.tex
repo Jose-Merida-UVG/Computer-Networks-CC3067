@@ -11,6 +11,7 @@
 \usepackage{xcolor}
 \usepackage{parskip}
 \usepackage{pgfplots}
+\usepackage{graphicx}
 
 \usetikzlibrary{arrows.meta}
 \pgfplotsset{compat=1.18}
@@ -104,7 +105,7 @@ Para esta parte usamos código Morse nuevamente, pero en lugar de transmitir en 
   \item LLAMAME LUEGO $\rightarrow$ LLAMAME LUERO
 \end{itemize}
 
-\textbf{España}
+\textbf{Javier España}
 \begin{itemize}[nosep]
   \item TRAJE LAS LLAVES $\rightarrow$ TRAJE LAS LLAVES
   \item ESTOY LLEGANDO $\rightarrow$ ESTOY LLEGANDO
@@ -178,7 +179,7 @@ y mantener este sistema más complejo.
     \item \textbf{Disponibilidad:} Primero, el emisor manda un breve mensaje de \texttt{LISTO?} para confirmar que el conmutador está activo. El conmutador responde \texttt{OK} o \texttt{NO} si no está disponible para abrir una conexión.
     \item \textbf{Apertura de conexión:} Tras recibir \texttt{OK}, la conexión queda abierta. A partir de este momento el conmutador permanece escuchando indefinidamente, sin necesidad de repetir el saludo en cada mensaje.
     \item \textbf{Envío del contenido:} Con la conexión abierta, el emisor envía la nota de voz con el contenido del mensaje seguida de un mensaje de texto indicando \texttt{EMISOR | RECEPTOR}. Esto puede repetirse cuantas veces sea necesario mientras la conexión siga viva.
-    \item \textbf{Direccionamiento:} El conmutador lee la etiqueta \texttt{EMISOR | RECEPTOR} y reenvía la nota de voz al receptor correspondiente. Por defecto, asumimos que todos los clientes están siempre disponibles para recibir mensajes.
+    \item \textbf{Direccionamiento:} El conmutador lee la etiqueta \texttt{EMISOR | RECEPTOR} y reenvía la nota de voz al receptor correspondiente. Por defecto, asumimos que todos los clientes están siempre disponibles para recibir mensajes. El reenvío conservó la misma etiqueta \texttt{EMISOR | RECEPTOR} que acompañaba a la nota de voz original, de manera que el receptor pudiera confirmar de quién provenía el mensaje sin que el conmutador tuviera que modificar el contenido.
     \item \textbf{Confirmación de reenvío:} Después de reenviar cada nota de voz, el conmutador responde al emisor con un \texttt{ENVIADO} para confirmar que el mensaje fue efectivamente reenviado al receptor, dejando claro que la conexión sigue abierta y lista para el siguiente envío.
     \item \textbf{Cierre:} Cuando el emisor termina, manda un mensaje de \texttt{CERRAR} para cerrar la conexión de forma explícita. El conmutador responde \texttt{ADIOS}, deja de escuchar a ese emisor y queda libre para una nueva solicitud de \texttt{LISTO?}.
 \end{itemize}
@@ -203,6 +204,26 @@ que en un sistema más grande estas mismas decisiones se volverían cuellos de b
 entre pocas personas por encima de uno más robusto pero complejo. Pusimos este protocolo en práctica con los 4 integrantes del grupo, uno actuando
 como conmutador y los otros tres como clientes emisor/receptor, y logramos completar el intercambio de mensajes siguiendo cada uno de los pasos
 descritos sin mayor problema, confirmando que el diseño funciona correctamente en la práctica para este número reducido de clientes.
+
+\begin{figure}[h]
+    \centering
+    \begin{minipage}{0.32\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figs/Protocolo1.jpeg}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.32\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figs/Protocolo2.jpeg}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.32\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figs/Protocolo3.jpeg}
+    \end{minipage}
+    \caption{Ejemplo de la conmutación de mensajes siguiendo el protocolo descrito.}
+\end{figure}
+
 \section*{Conclusiones}
 
 A partir de este laboratorio pudimos comprobar de forma práctica las limitaciones que enfrentaban los esquemas de comunicación
