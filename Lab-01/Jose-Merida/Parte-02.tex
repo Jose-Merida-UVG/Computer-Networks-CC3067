@@ -12,6 +12,7 @@
 \usepackage{parskip}
 \usepackage{pgfplots}
 \usepackage{graphicx}
+\usepackage{float}
 
 \title{\textbf{Parte 2: Introducción a Wireshark} \vspace{1em}\\
   Redes de Computadoras - CC308}
@@ -23,5 +24,167 @@
 \maketitle
 \section*{Introducción}
 
+En la primera parte de este laboratorio se replicaron esquemas de comunicación previos a las redes modernas (código Morse,
+código Baudot y un protocolo propio de conmutación de mensajes), lo cual permitió evidenciar de forma práctica los problemas
+de fiabilidad, ergonomía y enrutamiento que enfrentaban dichos esquemas. En esta segunda parte se aborda una herramienta
+central para el estudio de las redes de computadoras actuales: Wireshark, un analizador de protocolos que permite capturar
+y examinar el tráfico que circula por una interfaz de red en tiempo real.
+
+El objetivo de esta parte es familiarizarse con el entorno de Wireshark, personalizando perfiles, layout y filtros, para luego
+realizar una captura de paquetes sobre la interfaz de red activa de la computadora y analizar una solicitud HTTP real, identificando
+las versiones del protocolo utilizadas, los encabezados relevantes de la solicitud y de la respuesta, y discutiendo consideraciones
+de rendimiento y seguridad relacionadas con el uso de esta herramienta.
+
+\section*{Personalización del Entorno}
+
+\subsection*{Configuración de perfil}
+
+Se creó un nuevo perfil en Wireshark para personalizar la captura sin afectar la configuración por defecto.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.9\textwidth]{figs/profile.png}
+  \caption{Creación del perfil personalizado en Wireshark.}
+  \label{fig:profile}
+\end{figure}
+
+\subsection*{Layout, Filtro y Botón de Filtro}
+
+Se modificó el layout de la interfaz, agregando un botón de filtro y una regla de coloreo personalizada.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=1\textwidth]{figs/layout.png}
+  \caption{Cambio de layout, botón agregado y regla de coloreo.}
+  \label{fig:layout}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=1\textwidth]{figs/coloringrule.png}
+  \caption{Regla de coloreo personalizada agregada en Wireshark.}
+  \label{fig:coloringrule}
+\end{figure}
+
+\subsection*{Interfaces Virtuales}
+
+Se removieron las interfaces virtuales o que no se encuentran en uso dentro del sistema, esto también se verifica por medio del comando
+\texttt{ifconfig} ejecutado en una sección posterior del laboratorio.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.8\textwidth]{figs/virtualinterfaces2.png}
+  \caption{Listado de interfaces sin las interfaces virtuales.}
+  \label{fig:virtualinterfaces}
+\end{figure}
+
+\section*{Configuración de la Captura de Paquetes}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.6\textwidth]{figs/ifconfig.png}
+  \caption{Ejecución de comando ifconfig.}
+  \label{fig:ifconfig}
+\end{figure}
+
+El comando \texttt{ifconfig} muestra todos los adaptadores de red disponibles en la computadora, al igual que sus direcciones IP (en caso
+de tener una asignada) e ID's de hardware. En este caso podemos ver tres dispositivos:
+
+\begin{itemize}
+  \item \texttt{enp6s0}: Interfaz de ethernet, no tiene IP asignada y no ha mandado o recibido ningún paquete. Esto es consistente con el
+    hecho que no está conectado ningún cable de ethernet a la computadora al momento de ejecutar el comando.
+  \item \texttt{lo}: Tiene asignada la IP \texttt{127.0.0.1}, es una interfaz virtual utilizada por el sistema operativo. Este es el
+    localhost.
+  \item \texttt{wlp0s20f3}: Interfaz de internet inalámbria, se puede ver la IP asignada \texttt{192.168.1.17} al igual que los
+    paquetes transmitidos (TX) y paquetes recibidos (RX) desde el momento de arranque. Esta es la interfaz de red activa del sistema.
+\end{itemize}
+
+Utilizando el dispositivo \texttt{wlp0s20f3} se realizó la captura con la siguiente configuración:
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.8\textwidth]{figs/pgcapconfig.png}
+  \caption{Configuración de las opciones de salida de la captura en Wireshark.}
+  \label{fig:pgcapconfig}
+\end{figure}
+
+Los archivos resultantes se encuentran dentro del repositorio de la entrega, dentro del directorio \texttt{files}.
+
+\section*{Análisis de Paquetes}
+
+Para el análisis se filtró el tráfico capturado utilizando el filtro \texttt{http}, aislando así únicamente las solicitudes y
+respuestas del protocolo HTTP generadas al cargar la página de prueba del laboratorio (\texttt{gaia.cs.umass.edu}).
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=1\textwidth]{figs/introcapture.png}
+  \caption{Solicitudes y respuestas HTTP capturadas al filtrar por \texttt{http}.}
+  \label{fig:introcapture}
+\end{figure}
+
+\subsection*{Preguntas}
+
+\begin{enumerate}[label=\alph*.]
+  \item ¿Qué versión de HTTP está ejecutando su navegador?
+
+    HTTP/1.1, evidenciado por la solicitud GET inicial hacia la página.
+
+  \item ¿Qué versión de HTTP está ejecutando el servidor?
+
+      HTTP/1.1, evidenciado por la respuesta 200 OK del servidor.
+
+  \item ¿Qué lenguajes (si aplica) indica el navegador que acepta a el servidor?
+
+    \begin{figure}[H]
+      \centering
+      \includegraphics[width=0.8\textwidth]{figs/lang.png}
+      \caption{Encabezados de la solicitud GET, incluyendo \texttt{Accept-Language}.}
+      \label{fig:lang}
+    \end{figure}
+
+    en-US, en. Inglés Americano e Inglés.
+
+  \item ¿Cuántos bytes de contenido fueron devueltos por el servidor?
+    \begin{figure}[H]
+      \centering
+      \includegraphics[width=0.8\textwidth]{figs/contentlen.png}
+      \caption{Encabezados de la respuesta HTTP, incluyendo \texttt{Content-Length}.}
+      \label{fig:contentlen}
+    \end{figure}
+    81 bytes.
+  \item En el caso que haya un problema de rendimiento mientras se carga la página, ¿en qué elementos de la red convendría
+    escuchar los paquetes?
+
+  \item ¿Es conveniente instalar Wireshark en el servidor? Justifique
+
+\end{enumerate}
+
+\section*{Discusión General}
+
+\section*{Conclusiones}
+
+\begin{itemize}
+
+\end{itemize}
+
+\begin{thebibliography}{9}
+
+\bibitem{wireshark-perf}
+Wireshark Foundation, \textit{Wireshark User's Guide: Chapter 7. Analyzing Protocols}. [En línea]. Disponible en:
+\url{https://www.wireshark.org/docs/wsug_html_chunked/}. [Accedido: 13-jul-2026].
+
+\bibitem{wireshark-security}
+SANS Institute, \textit{Packet Capture Best Practices: Security and Performance Considerations}. [En línea]. Disponible en:
+\url{https://www.sans.org/white-papers/}. [Accedido: 13-jul-2026].
+
+\bibitem{ifconfig-ref}
+GeeksforGeeks, \textit{ifconfig command in Linux with Examples}. [En línea]. Disponible en:
+\url{https://www.geeksforgeeks.org/linux-unix/ifconfig-command-in-linux-with-examples/}. [Accedido: 13-jul-2026].
+
+\bibitem{http-len}
+Stack Overflow, \textit{How to check length of protocols}. [En línea]. Disponible en:
+\url{https://stackoverflow.com/questions/24197371/how-to-check-length-of-protocols}. [Accedido: 13-jul-2026].
+
+\end{thebibliography}
 
 \end{document}
