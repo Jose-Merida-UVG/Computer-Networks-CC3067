@@ -50,7 +50,10 @@ Se creó un nuevo perfil en Wireshark para personalizar la captura sin afectar l
 
 \subsection*{Layout, Filtro y Botón de Filtro}
 
-Se modificó el layout de la interfaz, agregando un botón de filtro y una regla de coloreo personalizada.
+Se modificó el layout de la interfaz, agregando un botón de filtro y una regla de coloreo personalizada. Adicionalmente, sobre el
+archivo \texttt{intro-wireshark-trace1.pcap} proporcionado se aplicó el formato de tiempo \texttt{Time of Day} y se agregó una
+columna con la longitud del protocolo, ocultando la columna \texttt{Longitud} original, cambios que también pueden observarse
+en la Figura \ref{fig:layout}.
 
 \begin{figure}[H]
   \centering
@@ -155,27 +158,69 @@ respuestas del protocolo HTTP generadas al cargar la página de prueba del labor
   \item En el caso que haya un problema de rendimiento mientras se carga la página, ¿en qué elementos de la red convendría
     escuchar los paquetes?
 
+    Conviene escuchar en varios puntos de la red y no solo en uno: el cliente, el servidor y los intermediarios como routers o
+    proxies \cite{wireshark-tcpdump-guide}. El retraso puede venir del servidor, de un enlace intermedio o del propio cliente, y
+    comparando capturas de varios puntos a la vez es más fácil ver dónde se concentra realmente la latencia \cite{wireshark-perf}.
+
   \item ¿Es conveniente instalar Wireshark en el servidor? Justifique
 
+    No. Wireshark es pesado y necesita interfaz gráfica, y la mayoría de servidores de producción ni siquiera tienen una instalada.
+    Los recursos del servidor deberían priorizarse para el servicio que ofrece, y agregar software extra solo suma superficie de
+    ataque y posibles fallos. Por eso lo normal es usar algo más ligero como tcpdump para capturar en el servidor, y luego analizar
+    esa captura en otra máquina con Wireshark \cite{wireshark-tcpdump-guide}.
 \end{enumerate}
 
 \section*{Discusión General}
 
+Ambas partes del laboratorio coinciden en ser una introducción a los problemas fundamentales de la comunicación en red pero desde
+ángulos muy distintos. En la primera parte reprodujimos ``a mano'' las dificultades de codificar, transmitir y decodificar un mensaje
+mediante Morse y Baudot, y diseñamos un protocolo propio de conmutación para varios clientes. Por otro lado, en esta segunda parte observamos
+directamente cómo esos mismos problemas (codificación, encabezados, enrutamiento, fiabilidad) ya están resueltos y en funcionamiento dentro del
+tráfico real que generan un navegador y un servidor web al comunicarse mediante HTTP. En mi opinión, es bastante interesante poder observar los
+dos extremos siendo uno comunicación rudimentaria y otro los protocolos modernos que cuentan con herramientas e infraestructura para poder
+explorarlos.
+
+Personalmente, me pareció valioso poder \textit{ver} el protocolo en acción en vez de solo leer sobre su funcionamiento en teoría.
+Configurar el entorno de Wireshark (perfiles, layout, reglas de coloreo) ayudó a entender un poco más la herramienta, ya que puede ser un
+poco abrumante al iniciar e intentar llevar a cabo tareas más complejas. El filtrar por \texttt{http} y examinar los encabezados también sirvió
+como un ejemplo práctico de como se solucionan las problemáticas que tuvimos en la parte 1, es importante que el emisor y el receptor compartan
+un mismo ``lenguaje'' al comunicarse. En este caso, existen campos del encabezado específico para poder detallar información del mensaje y lo
+que se espera en el retorno.
+
+También me pareció interesante la discusión sobre el monitoreo de la red, mientras más compleja sea la infraestructura también se requiere
+un monitoreo más extenso para asegurar la integridad del sistema a lo largo de sus diferentes componentes. Concluyendo, personalmente me pareció
+una buena introducción al curso. Logramos identificar algunas de las problemáticas que los protocolos de red modernos resuelven, al igual que una
+pequeña exposición a herramientas que se utilizan hoy en día y algunas convenciones del protocolo \texttt{http}.
+
 \section*{Conclusiones}
 
-\begin{itemize}
+Este laboratorio me dejó claro que establecer un protocolo de comunicación desde cero es un problema bastante grande, incluso en
+un sistema pequeño. Trabajar con Morse y Baudot en la parte 1 mostró que cosas que hoy se dan por sentadas, como que el receptor
+sepa cuándo inicia y termina un mensaje o que ambas partes compartan el mismo código, requieren decisiones de diseño explícitas
+y no ocurren solas.
 
-\end{itemize}
+Revisar los encabezados de HTTP en la parte 2 me permitió confirmar que estos, que antes veía como detalles secundarios del
+desarrollo web, en realidad resuelven los mismos problemas que enfrentamos a mano con Morse y Baudot solo que de forma más
+depurada y estandarizada. Esto refuerza mi entendimiento detrás de las decisiones tomadas al desarrollarse los protocolos
+modernos.
+
+Tanto pensar en la escalabilidad del conmutador de la parte 1 como la discusión sobre dónde conviene monitorear una red en la
+parte 2 me mostraron que la complejidad de un sistema de comunicación no depende solo del protocolo que se use, sino también de
+cómo este se comporta y se supervisa conforme crece. Por eso el diseño de un protocolo y la infraestructura a su alrededor
+terminan siendo dos caras de la misma moneda.
+
+Finalmente, usar Wireshark me demostró que las herramientas que pueden parecer intimidantes al principio se vuelven mucho más manejables
+luego de un primer uso simple y guiado. Además, también pude entender un poco de por qué esta herramienta es tan importante para el curso. En
+conjunto, creo que el laboratorio me deja una buena base para el curso, con ganas de profundizar tanto en los protocolos como en las herramientas
+que se usan para analizarlos.
+
+\newpage
 
 \begin{thebibliography}{9}
 
 \bibitem{wireshark-perf}
-Wireshark Foundation, \textit{Wireshark User's Guide: Chapter 7. Analyzing Protocols}. [En línea]. Disponible en:
-\url{https://www.wireshark.org/docs/wsug_html_chunked/}. [Accedido: 13-jul-2026].
-
-\bibitem{wireshark-security}
-SANS Institute, \textit{Packet Capture Best Practices: Security and Performance Considerations}. [En línea]. Disponible en:
-\url{https://www.sans.org/white-papers/}. [Accedido: 13-jul-2026].
+Mozilla Developer Network, \textit{HTTP messages}. [En línea]. Disponible en:
+\url{https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/Messages}. [Accedido: 13-jul-2026].
 
 \bibitem{ifconfig-ref}
 GeeksforGeeks, \textit{ifconfig command in Linux with Examples}. [En línea]. Disponible en:
@@ -184,6 +229,10 @@ GeeksforGeeks, \textit{ifconfig command in Linux with Examples}. [En línea]. Di
 \bibitem{http-len}
 Stack Overflow, \textit{How to check length of protocols}. [En línea]. Disponible en:
 \url{https://stackoverflow.com/questions/24197371/how-to-check-length-of-protocols}. [Accedido: 13-jul-2026].
+
+\bibitem{wireshark-tcpdump-guide}
+Unwired Learning, \textit{Wireshark and tcpdump: A Practical Guide to Network Traffic Analysis}. [En línea]. Disponible en:
+\url{https://unwiredlearning.com/blog/wireshark-tcpdump-guide}. [Accedido: 13-jul-2026].
 
 \end{thebibliography}
 
